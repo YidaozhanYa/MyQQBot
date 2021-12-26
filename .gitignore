@@ -1,0 +1,8 @@
+cooldown/
+device.json
+config.php
+config.yml
+go-cqhttp
+session.token
+data/
+logs/
