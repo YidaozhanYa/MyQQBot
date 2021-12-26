@@ -171,7 +171,9 @@ function do_cooldown($cooldown_id,$cooldown_time,$args){
 		$time_pass=intval(time())-intval($cooldown_array[$args['user_id']]);
 		error_log($time_pass);
 		if ($time_pass<$cooldown_time) {
-			delete_msg(send_group_msg($args["group_id"],"该命令还在冷却，剩余 ".strval($cooldown_time-$time_pass)." 秒。"));
+			$msgid=send_group_msg($args["group_id"],"该命令还在冷却，剩余 ".strval($cooldown_time-$time_pass)." 秒。");
+			usleep(500);
+			delete_msg($msgid);
 			$return= true;
 		} else {
 			$cooldown_array[$args['user_id']]=time();

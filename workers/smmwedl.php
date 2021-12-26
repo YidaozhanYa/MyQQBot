@@ -11,7 +11,7 @@ function permission()
 
 function msg_handler($args)
 {
-    //if (do_cooldown('we',60,$args)) {return;};
+    if (do_cooldown('we',6000,$args)) {return;};
     error_log($args["message"]);
     $lvl_id = strtoupper(str_replace(CMD_PREFIX . "smmwedl ", "", $args['message']));
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
