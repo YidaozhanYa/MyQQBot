@@ -172,7 +172,7 @@ function do_cooldown($cooldown_id,$cooldown_time,$args){
 		error_log($time_pass);
 		if ($time_pass<$cooldown_time) {
 			$msgid=send_group_msg($args["group_id"],"该命令还在冷却，剩余 ".strval($cooldown_time-$time_pass)." 秒。");
-			usleep(500);
+			sleep(1);
 			delete_msg($msgid);
 			$return= true;
 		} else {
