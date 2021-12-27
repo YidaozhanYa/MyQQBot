@@ -157,7 +157,7 @@ function post_data($url, $enable_header, $follow_location, $postfields){
 
 // 命令冷却系统
 function do_cooldown($cooldown_id,$cooldown_time,$args){
-	$cooldown_file='cooldown/'.$cooldown_id.'.php';
+	$cooldown_file='data_store/cooldown_'.$cooldown_id.'.php';
 	error_log('执行命令冷却，本地文件为 '.$cooldown_file);
 	if (file_exists($cooldown_file)) {
 		require($cooldown_file);
@@ -181,7 +181,6 @@ function do_cooldown($cooldown_id,$cooldown_time,$args){
 		};
 	};
 $code= "<?php \$cooldown_array=".var_export($cooldown_array,true)."; ?>";
-error_log($code);
 file_put_contents($cooldown_file, $code);
 return $return;
 };
