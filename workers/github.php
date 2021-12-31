@@ -1,4 +1,6 @@
 <?php
+//desc 获取 GitHub 上的用户或仓库信息
+//usage <用户>/<仓库>
 function permission()
 {
     global $allow_user;

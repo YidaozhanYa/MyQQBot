@@ -1,4 +1,6 @@
 <?php
+//desc 查询 ArchLinux 软件包，包括软件库和 AUR
+//usage <包名>
 function permission(){
 	global $allow_user;
 	global $allow_group;

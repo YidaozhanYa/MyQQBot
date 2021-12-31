@@ -1,4 +1,6 @@
 <?php
+//desc 测试网络延迟
+//usage <域名或IP>
 function permission(){
 	global $allow_user;
 	global $allow_group;

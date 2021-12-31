@@ -6,7 +6,15 @@ global_config();
 // 接收消息，调用 worker 里的 msg_handler 函数
 global $args;
 $args=json_decode(file_get_contents("php://input"),true);
-	require(getcwd()."/workers/".str_replace(CMD_PREFIX,"",explode(" ",$args["message"])[0]).".php");
+$args['message']=str_replace(CMD_PREFIX_BACKUP,CMD_PREFIX,$args['message']);
+	if(do_ban($args)){return;};
+	$fname=getcwd()."/workers/".str_replace(CMD_PREFIX,"",explode(" ",$args["message"])[0]).".php";
+	if(file_exists($fname)) {
+		require($fname);
+	} else {
+		send_group_msg($args['group_id'],"命令未找到。");
+		return;
+	};
 	// 用户权限
 	global $allow_user;
 	global $allow_group;
@@ -78,33 +86,17 @@ function cqhttp_api($api,$get_data){
 	$return_data=curl_exec($curl);
 	curl_close($curl);
 	error_log(json_encode($return_data));
-	return json_decode($return_data,true);
+	return json_decode($return_data,true)['data'];
 	};
-
-//调用 go-cqhttp 的 API （POST 方法）
-function cqhttp_api_post($api,$get_data,$post_data){
-$curl=curl_init();
-//curl_setopt($curl,CURLOPT_HEADER,0);
-curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
-curl_setopt($curl,CURLOPT_POST,1);
-$datastr='http://127.0.0.1:'.strval(CQHTTP_PORT)."/".$api.'?';
-foreach ($get_data as $k=>$d){
-$datastr=$datastr.rawurlencode($k).'='.rawurlencode($d).'&';
-};
-$datastr=substr($datastr, 0, -1);
-curl_setopt($curl,CURLOPT_URL,$datastr);
-curl_setopt($curl,CURLOPT_POSTFIELDS,$post_data);
-error_log($datastr);
-error_log(json_encode($post_data));
-$return_data=curl_exec($curl);
-curl_close($curl);
-error_log(json_encode($return_data));
-
-};
 
 // 发送群消息（API 封装）
 function send_group_msg($group_id,$message){
-	return intval(cqhttp_api("send_msg",array("message_type"=>"group","group_id"=>intval($group_id),"message"=>$message))['data']['message_id']);
+	return intval(cqhttp_api("send_msg",array("message_type"=>"group","group_id"=>intval($group_id),"message"=>$message))['message_id']);
+};
+
+// 发送频道消息（API 封装）
+function send_guild_msg($group_id,$message){
+	return intval(cqhttp_api("send_msg",array("message_type"=>"group","group_id"=>intval($group_id),"message"=>$message))['message_id']);
 };
 
 // 撤回消息（API 封装）
@@ -115,7 +107,7 @@ function delete_msg($message_id){
 
 // 发送群文件（API 封装）
 function upload_group_file($group_id,$file,$name){
-	return intval(cqhttp_api("upload_group_file",array("group_id"=>intval($group_id),"file"=>$file,"name"=>$name))['data']['message_id']);
+	return intval(cqhttp_api("upload_group_file",array("group_id"=>intval($group_id),"file"=>$file,"name"=>$name))['message_id']);
 };
 
 
@@ -184,4 +176,24 @@ $code= "<?php \$cooldown_array=".var_export($cooldown_array,true)."; ?>";
 file_put_contents($cooldown_file, $code);
 return $return;
 };
+
+// 封禁系统
+function do_ban($args){
+	$ban_file='data_store/ban.php';
+	if (file_exists($ban_file)) {
+		require($ban_file);
+	} else {
+		return false;
+	};
+	if (is_null($ban_array[$args['user_id']])==false) {
+		if ((time()-$ban_array[$args['user_id']][1])<$ban_array[$args['user_id']][0]) {
+			$msgid=send_group_msg($args["group_id"],"用户已经封禁，距离解封还剩 ".strval($ban_array[$args['user_id']][1]-(time()-$ban_array[$args['user_id']][0]))." 秒。");
+			$return= true;
+		} else {
+			$return= false;
+		};
+	};
+return $return;
+};
+
 ?>

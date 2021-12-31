@@ -1,4 +1,6 @@
 <?php
+//desc 查询《超级马里奥制造 2》玩家信息
+//usage <玩家ID>，带不带横杠均可
 
 function permission(){
 	global $allow_user;
@@ -8,19 +10,19 @@ function permission(){
 };
 
 function msg_handler($args){
-	if (do_cooldown('mm2',60,$args)) {return;};
 	error_log($args["message"]);
-    $mkr_id=str_replace(CMD_PREFIX."mm2maker ","",$args["message"]);
+    $mkr_id=str_replace(CMD_PREFIX."马造查玩家 ","",$args["message"]);
     $mkr_id=str_replace('-','',$mkr_id);
     $mkr_id=str_replace(' ','',$mkr_id);
     $mkr_id=strtoupper($mkr_id);
     if (strlen($mkr_id)!==9){
-    	send_group_msg($args["group_id"],"无效的工匠 ID。");
+    	send_group_msg($args["group_id"],"无效的玩家 ID。");
     	return;
 	};
+	if (do_cooldown('mm2',60,$args)) {return;};
 	$url="https://".TGRCODE."/mm2/user_info/".$mkr_id;
 	error_log($url);
-	$message_id=send_group_msg($args["group_id"],"正在查询工匠 ".$mkr_id." ...");
+	$message_id=send_group_msg($args["group_id"],"正在查询玩家 ".$mkr_id." ...");
     $mkr_arr=json_decode(get_data($url,0,0),true);
 	if (is_null($mkr_arr['error'])==false){
 		send_group_msg($args["group_id"],'发生错误：'.$mkr_arr['error']);

@@ -1,4 +1,6 @@
 <?php
+//desc 发送一条一言
+//usage 无
 function permission(){
 	global $allow_user;
 	global $allow_group;

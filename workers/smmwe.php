@@ -1,4 +1,6 @@
 <?php
+//desc 下载 《SMM:WE》 在线关卡
+//usage <关卡ID>，带横杠
 define('apariencia', array('超马1', '超马3', '超马世界', '新超马U', '超马3D世界'));
 define('theme', array('Castle' => '城堡', 'Airship' => '飞行船', 'Ghost house' => '鬼屋', 'Underground' => '地下', 'Sky' => '天空', 'Snow' => '雪原', 'Desert' => '沙漠', 'Overworld' => '平原', 'Forest' => '丛林', 'Underwater' => '水中'));
 function permission()
@@ -11,13 +13,13 @@ function permission()
 
 function msg_handler($args)
 {
-    if (do_cooldown('we',6000,$args)) {return;};
     error_log($args["message"]);
-    $lvl_id = strtoupper(str_replace(CMD_PREFIX . "smmwedl ", "", $args['message']));
+    $lvl_id = strtoupper(str_replace(CMD_PREFIX . "smmwe ", "", $args['message']));
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
         send_group_msg($args["group_id"], "关卡 ID 格式不正确。格式：XXXX-XXXX-XXXX-XXXX");
         return;
     };
+    if (do_cooldown('we',6000,$args)) {return;};
     $message_id = send_group_msg($args["group_id"], "正在查询关卡 " . $lvl_id . " ...");
     $auth_code = file_get_contents("data_store/smmwe_auth_code.txt");
     $url = "http://172.93.102.10:25833/stage/" . $lvl_id;
