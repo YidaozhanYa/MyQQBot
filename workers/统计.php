@@ -9,7 +9,6 @@ function permission(){
 };
 
 function msg_handler($args){
-	error_log($args["message"]);
 	$return="";
 	$stat=cqhttp_api('get_status',array())['stat'];
 	$ver=cqhttp_api('get_version_info',array())['app_version'];
@@ -27,7 +26,7 @@ function msg_handler($args){
 	$return=$return."发消息数：".$stat['MessageSent'].PHP_EOL;
 	$return=$return."连接中断数：".$stat['DisconnectTimes'].PHP_EOL;
 	$return=$return."掉线数：".$stat['LostTimes'];
-	send_group_msg($args["group_id"],$return);
+	send_msg($args,$return);
 	return;
 };
 ?>

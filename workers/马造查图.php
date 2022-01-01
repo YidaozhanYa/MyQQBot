@@ -13,22 +13,21 @@ function permission(){
 };
 
 function msg_handler($args){
-	error_log($args["message"]);
-    $lvl_id=str_replace(CMD_PREFIX."马造查图 ","",$args["message"]);
+    $lvl_id=$args['command'];
     $lvl_id=str_replace('-','',$lvl_id);
     $lvl_id=str_replace(' ','',$lvl_id);
     $lvl_id=strtoupper($lvl_id);
         if (strlen($lvl_id)!==9){
-    	send_group_msg($args["group_id"],"无效的关卡 ID。");
+    	send_msg($args,"无效的关卡 ID。");
     	return;
 	};
 	if (do_cooldown('mm2',60,$args)) {return;};
 	$url="https://".TGRCODE."/mm2/level_info/".$lvl_id;
 	error_log($url);
-	$message_id=send_group_msg($args["group_id"],"正在查询关卡 ".$lvl_id." ...");
+	$message_id=send_msg($args,"正在查询关卡 ".$lvl_id." ...");
     $lvl_arr=json_decode(get_data($url,0,0),true);
 	if (is_null($lvl_arr['error'])==false){
-		send_group_msg($args["group_id"],'发生错误：'.$lvl_arr['error']);
+		send_msg($args,'发生错误：'.$lvl_arr['error']);
 		return;
 	};
 	$output="";
@@ -39,12 +38,12 @@ function msg_handler($args){
 	$output=$output."简介：".$lvl_arr['description'].PHP_EOL;
 	$output=$output.$lvl_arr['attempts'].'/'.$lvl_arr['clears'].' ('.$lvl_arr['clear_rate'].' '.difficulty[$lvl_arr['difficulty']].')'.PHP_EOL;
 	$output=$output.$lvl_arr['likes'].'赞，'.$lvl_arr['boos'].'孬';
-	send_group_msg($args["group_id"],$output);
+	send_msg($args,$output);
 	
 	$output="";
 	$output=$output.'首插者：'.$lvl_arr['first_completer']['name'].PHP_EOL;
 	$output=$output.'纪录：'.$lvl_arr['record_holder']['name'].' '.$lvl_arr['world_record_pretty'];
-	send_group_msg($args["group_id"],$output);
+	send_msg($args,$output);
 	
 	delete_msg($message_id);
 

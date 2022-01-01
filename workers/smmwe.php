@@ -13,14 +13,14 @@ function permission()
 
 function msg_handler($args)
 {
-    error_log($args["message"]);
-    $lvl_id = strtoupper(str_replace(CMD_PREFIX . "smmwe ", "", $args['message']));
+    if ($args['message_type']=='group'){
+    $lvl_id = strtoupper($args['command']);
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
-        send_group_msg($args["group_id"], "关卡 ID 格式不正确。格式：XXXX-XXXX-XXXX-XXXX");
+        send_msg($args, "关卡 ID 格式不正确。格式：XXXX-XXXX-XXXX-XXXX");
         return;
     };
     if (do_cooldown('we',6000,$args)) {return;};
-    $message_id = send_group_msg($args["group_id"], "正在查询关卡 " . $lvl_id . " ...");
+    $message_id = send_msg($args, "正在查询关卡 " . $lvl_id . " ...");
     $auth_code = file_get_contents("data_store/smmwe_auth_code.txt");
     $url = "http://172.93.102.10:25833/stage/" . $lvl_id;
     $data = json_decode(post_data($url, 0, 0, "token=30204864&discord_id=" . SMMWE_DISCORDID . "&auth_code=" . $auth_code), true);
@@ -32,7 +32,7 @@ function msg_handler($args)
         error_log(json_encode($data));
     };
     if (is_null($data['error_type']) == false and $data['error_type'] = '029') {
-        send_group_msg($args["group_id"], "关卡 ".$lvl_id." 不存在。");
+        send_msg($args, "关卡 ".$lvl_id." 不存在。");
         delete_msg($message_id);
         return;
     };
@@ -50,8 +50,11 @@ function msg_handler($args)
     $lvl_file=get_data($data['archivo'],0,0);
     file_put_contents("data_store/smmwe.swe",$lvl_file);
     upload_group_file($args["group_id"],"data_store/smmwe.swe",$data['name']." ".$lvl_id.".swe");
-    send_group_msg($args["group_id"], $return);
+    send_msg($args, $return);
     delete_msg($message_id);
-
     return;
+    } else {
+        send_msg($args, "这个命令只能在群里使用，因为机器人没有权限发送私聊文件。");
+        return;
+    };
 };

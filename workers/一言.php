@@ -10,7 +10,6 @@ function permission(){
 
 function msg_handler($args){
 	$yiyan=json_decode(get_data('https://v1.hitokoto.cn/',0,0),true);
-	error_log($args["message"]);
-	send_group_msg($args["group_id"],$yiyan['hitokoto'].' —— '.$yiyan['from']);
+	send_msg($args,$yiyan['hitokoto'].' —— '.$yiyan['from']);
 };
 ?>

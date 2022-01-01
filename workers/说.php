@@ -10,8 +10,6 @@ function permission(){
 };
 
 function msg_handler($args){
-
-	error_log($args["message"]);
-	send_group_msg($args["group_id"],str_replace(CMD_PREFIX."说 ","",$args["message"]));
+	send_msg($args,$args["command"]);
 };
 ?>

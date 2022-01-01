@@ -9,17 +9,15 @@ function permission(){
 };
 
 function msg_handler($args){
-	error_log($args["message"]);
-    $pkgname=strtolower(str_replace(CMD_PREFIX."arch ","",$args["message"]));
+    $pkgname=strtolower($args['command']);
 	$url="https://archlinux.org/packages/search/json/?name=".$pkgname;
-	error_log($url);
     $pkgarr=json_decode(get_data($url,0,0),true);
     if ($pkgarr['results']==array()) {
     	//AUR
     	$url="https://aur.archlinux.org/rpc/?v=5&type=info&arg=".$pkgname;
     	$pkgarr=json_decode(get_data($url,0,0),true);
    	 if ($pkgarr['resultcount']==0) {
-	    	send_group_msg($args["group_id"],'错误：查无此包。');
+	    	send_msg($args,'错误：查无此包。');
 	    	return;
 		};
 		error_log(json_encode($pkgarr));
@@ -38,7 +36,7 @@ function msg_handler($args){
 		$output=$output.get_value($pkgarr,"OptDepends","可选依赖",PHP_EOL);
 		$output=$output.get_value($pkgarr,"Conflicts","冲突","，");
 		$output=$output.get_value($pkgarr,"Provides","提供","，");
-		send_group_msg($args["group_id"],$output);
+		send_msg($args],$output);
 		return;
 	};
     error_log(json_encode($pkgarr));
@@ -54,7 +52,7 @@ function msg_handler($args){
 	$output=$output.get_value($pkgarr,"conflicts","冲突","，");
 	$output=$output.get_value($pkgarr,"provides","提供","，");
 	$output=$output."体积：".round((intval($pkgarr['compressed_size'])/1024/1024),2)."MB (安装后  ".round((intval($pkgarr['installed_size'])/1024/1024),2)."MB)";
-	send_group_msg($args["group_id"],$output);
+	send_msg($args,$output);
 	return;
 };
 

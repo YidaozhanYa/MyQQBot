@@ -9,8 +9,8 @@ function permission(){
 };
 
 function msg_handler($args){
-	error_log($args["message"]);
-    exec("ping -c 2 ".str_replace(CMD_PREFIX."ping ","",$args["message"]), $retval);
+	if (do_cooldown('ping',30,$args)) {return;};
+    exec("ping -c 2 ".$args['command'], $retval);
 	send_group_msg($args["group_id"],implode(PHP_EOL,$retval));
 };
 ?> 

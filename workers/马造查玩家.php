@@ -10,22 +10,21 @@ function permission(){
 };
 
 function msg_handler($args){
-	error_log($args["message"]);
-    $mkr_id=str_replace(CMD_PREFIX."马造查玩家 ","",$args["message"]);
+    $mkr_id=$args['command'];
     $mkr_id=str_replace('-','',$mkr_id);
     $mkr_id=str_replace(' ','',$mkr_id);
     $mkr_id=strtoupper($mkr_id);
     if (strlen($mkr_id)!==9){
-    	send_group_msg($args["group_id"],"无效的玩家 ID。");
+    	send_msg($args,"无效的玩家 ID。");
     	return;
 	};
 	if (do_cooldown('mm2',60,$args)) {return;};
 	$url="https://".TGRCODE."/mm2/user_info/".$mkr_id;
 	error_log($url);
-	$message_id=send_group_msg($args["group_id"],"正在查询玩家 ".$mkr_id." ...");
+	$message_id=send_msg($args,"正在查询玩家 ".$mkr_id." ...");
     $mkr_arr=json_decode(get_data($url,0,0),true);
 	if (is_null($mkr_arr['error'])==false){
-		send_group_msg($args["group_id"],'发生错误：'.$mkr_arr['error']);
+		send_msg($args,'发生错误：'.$mkr_arr['error']);
 		return;
 	};
 	$output="";
@@ -43,7 +42,7 @@ function msg_handler($args){
 	$output=$output.'普通团纪录：'.$mkr_arr['normal_highscore'].PHP_EOL;
 	$output=$output.'困难团纪录：'.$mkr_arr['expert_highscore'].PHP_EOL;
 	$output=$output.'极难团纪录：'.$mkr_arr['super_expert_highscore'];
-	send_group_msg($args["group_id"],$output);
+	send_msg($args,$output);
 	
 	$output="";
 	$output=$output.'对战积分：'.$mkr_arr['versus_rating'].' 段位：'.$mkr_arr['versus_rank_name'].PHP_EOL;
@@ -56,7 +55,7 @@ function msg_handler($args){
 	$output=$output.'合作场数：'.$mkr_arr['coop_plays'].PHP_EOL;
 	$output=$output.'合作过关场数：'.$mkr_arr['coop_clears'].PHP_EOL;
 	$output=$output.'网络区服：'.$mkr_arr['region_name'];
-	send_group_msg($args["group_id"],$output);
+	send_msg($args,$output);
 	
 	delete_msg($message_id);
 	
