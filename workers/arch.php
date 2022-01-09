@@ -36,7 +36,7 @@ function msg_handler($args){
 		$output=$output.get_value($pkgarr,"OptDepends","可选依赖",PHP_EOL);
 		$output=$output.get_value($pkgarr,"Conflicts","冲突","，");
 		$output=$output.get_value($pkgarr,"Provides","提供","，");
-		send_msg($args],$output);
+		send_msg($args,$output);
 		return;
 	};
     error_log(json_encode($pkgarr));

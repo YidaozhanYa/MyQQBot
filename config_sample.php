@@ -17,6 +17,7 @@ function global_config(){
 	define('SMMWE_PASSWD',"123"); // SMMWE 密码
 	define('SMMWE_DISCORDID',"123"); // SMMWE DiscordID
 	define('GITHUB_TOKEN','ghp_xxx'); // GitHub Token
+	define('BOT_UIN',3526514925); // 机器人 QQ 号
 
 	// 频道相关
 	define('NOPERMIT_CHANNEL_ERROR',false); // 当某子频道没权限执行命令时是否发送错误消息
@@ -26,7 +27,7 @@ function global_config(){
 	define('CHANNEL_ID','123'); // 机器人工作的子频道 ID
 
 	// 帮助命令表
-    define('CMDLIST',array('basic'=>array('基本命令',array('帮助','说','统计')),'game'=>array('游戏相关命令',array('马造查图','马造查玩家','smmwe')),'tools'=>array('网络及工具相关命令',array('ping','arch','github','base64','一言')),'admin'=>array('管理员/超级管理员命令',array('banuser','sh')))); //帮助内的命令分类
+    define('CMDLIST',array('基本'=>array('基本命令',array('帮助','说','统计')),'游戏'=>array('游戏相关命令',array('马造查图','马造查玩家','smmwe','原神祈愿')),'工具'=>array('网络及工具相关命令',array('ping','arch','github','base64','一言')),'管理'=>array('管理员/超级管理员命令',array('banuser','sh')))); //帮助内的命令分类
 };
 
 function global_permission(){

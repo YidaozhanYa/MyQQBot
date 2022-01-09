@@ -3,12 +3,13 @@
 require("config.php");
 global_config();
 
-// 接收消息，调用 worker 里的 msg_handler 函数
+// 接收消息，调用 msg_handler 函数
 global $args;
 error_log(file_get_contents("php://input"));
 $args=json_decode(file_get_contents("php://input"),true);
 $args['message']=str_replace(CMD_PREFIX_BACKUP,CMD_PREFIX,$args['message']);
 $cmd_name=str_replace(CMD_PREFIX,"",explode(" ",$args["message"])[0]);
+
 // 频道相关判定
 if ($args['message_type']=='guild') {
 	if ($args['guild_id']!==GUILD_ID){
@@ -29,83 +30,109 @@ if ($args['message_type']=='guild') {
 		return;	
 	};
 };
-	if(do_ban($args)){return;};
-	$fname=getcwd()."/workers/".$cmd_name.".php";
-	if(file_exists($fname)) {
-		$args['command']=str_replace(explode(" ",$args["message"])[0],"",$args["message"]);
-		do {
-			$args['command']=substr($args['command'],1);
-		} while (substr($args['command'],0,1)==" ");
-		require($fname);
-	} else {
-		if (CMDNOTFOUND_ERROR) {
-		send_msg($args,"命令未找到。");
-		} else {
-			error_log("命令未找到。".$args['message']);
-		};
-		return;
-	};
-	// 用户权限
-	global $allow_user;
-	global $allow_group;
-	global $deny_user;
-	global $deny_group;
-	permission();
-	global_permission();
-	
-	// allow 和 deny 不能同时使用
-	if (is_null($allow_user)==false and is_null($deny_user)==false) {
-		error_log("命令权限设置错误");
-		return;
-	};
-	if (is_null($allow_group)==false and is_null($deny_group)==false) {
-		error_log("命令权限设置错误");
-		return;
-	};
-	if (is_null($allow_user)==false and in_array($args['user_id'],$allow_user,true)==false) {
-		if (NOPERMIT_USER_ERROR) {
-			send_msg($args,"您没有使用此命令的权限。");
-		} else {
-			error_log($args["group_id"],"您没有使用此命令的权限。");
-		};
-		return;
-	};
-	if (is_null($deny_user)==false and in_array($args['user_id'],$deny_user,true)==true) {
-		if (NOPERMIT_USER_ERROR) {
-			send_msg($args,"您没有使用此命令的权限。");
-		} else {
-			error_log($args["group_id"],"您没有使用此命令的权限。");
-		};
-		return;
-	};
-	if ($args['message_type']=='group' and is_null($allow_group)==false and in_array($args['group_id'],$allow_group,true)==false) {
-		if (NOPERMIT_GROUP_ERROR) {
-			send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
-		} else {
-			error_log($args['group_id']." 群组未启用机器人。");
-		};
-		
-		return;
-	};
-	if ($args['message_type']=='group' and is_null($deny_group)==false and in_array($args['group_id'],$deny_group,true)==true) {
-		if (NOPERMIT_GROUP_ERROR) {
-			send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
-		} else {
-			error_log($args['group_id']." 群组未启用机器人。");
-		};
-		return;
-	};
-	
-	msg_handler($args);
-	return;
 
-// 以下函数可在各个 worker 内调用
+// 封禁
+if(do_ban($args)){return;};
+
+// ？？？？
+if (preg_match('/[涩色]图/',$args['message'])) {
+	send_msg($args,'没有涩图');
+	return;
+};
+$fname=getcwd()."/workers/".$cmd_name.".php";
+if(file_exists($fname)) {
+	$args['command']=str_replace(explode(" ",$args["message"])[0],"",$args["message"]);
+	do {
+		$args['command']=substr($args['command'],1);
+	} while (substr($args['command'],0,1)==" ");
+	require($fname);
+} else {
+	if (CMDNOTFOUND_ERROR) {
+	send_msg($args,"命令未找到。");
+	} else {
+		error_log("命令未找到。".$args['message']);
+	};
+	return;
+};
+
+// 用户权限
+global $allow_user;
+global $allow_group;
+global $deny_user;
+global $deny_group;
+permission();
+global_permission();
+// allow 和 deny 不能同时使用
+if (is_null($allow_user)==false and is_null($deny_user)==false) {
+	error_log("命令权限设置错误");
+	return;
+};
+if (is_null($allow_group)==false and is_null($deny_group)==false) {
+	error_log("命令权限设置错误");
+	return;
+};
+if (is_null($allow_user)==false and in_array($args['user_id'],$allow_user,true)==false) {
+	if (NOPERMIT_USER_ERROR) {
+		send_msg($args,"您没有使用此命令的权限。");
+	} else {
+		error_log($args["group_id"],"您没有使用此命令的权限。");
+	};
+	return;
+};
+if (is_null($deny_user)==false and in_array($args['user_id'],$deny_user,true)==true) {
+	if (NOPERMIT_USER_ERROR) {
+		send_msg($args,"您没有使用此命令的权限。");
+	} else {
+		error_log($args["group_id"],"您没有使用此命令的权限。");
+	};
+	return;
+};
+if ($args['message_type']=='group' and is_null($allow_group)==false and in_array($args['group_id'],$allow_group,true)==false) {
+	if (NOPERMIT_GROUP_ERROR) {
+		send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
+	} else {
+		error_log($args['group_id']." 群组未启用机器人。");
+	};
+	return;
+};
+if ($args['message_type']=='group' and is_null($deny_group)==false and in_array($args['group_id'],$deny_group,true)==true) {
+	if (NOPERMIT_GROUP_ERROR) {
+		send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
+	} else {
+		error_log($args['group_id']." 群组未启用机器人。");
+	};
+	return;
+};
+msg_handler($args);
+return;
+
+// 以下函数可在各个命令内调用
 
 //调用 go-cqhttp 的 API （GET 方法）
 function cqhttp_api($api,$get_data){
 	$curl=curl_init();
 	//curl_setopt($curl,CURLOPT_HEADER,0);
 	curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+	$datastr='http://127.0.0.1:'.strval(CQHTTP_PORT)."/".$api.'?';
+	foreach ($get_data as $k=>$d){
+	$datastr=$datastr.rawurlencode($k).'='.rawurlencode($d).'&';
+	};
+	$datastr=substr($datastr, 0, -1);
+	curl_setopt($curl,CURLOPT_URL,$datastr);
+	error_log($datastr);
+	$return_data=curl_exec($curl);
+	curl_close($curl);
+	error_log(json_encode($return_data));
+	return json_decode($return_data,true)['data'];
+	};
+
+//调用 go-cqhttp 的 API （POST 方法）
+function cqhttp_api_post($api,$get_data,$post_data){
+	$curl=curl_init();
+	//curl_setopt($curl,CURLOPT_HEADER,0);
+	curl_setopt($curl,CURLOPT_RETURNTRANSFER,1);
+	curl_setopt($curl,CURLOPT_POST,1);
+	curl_setopt($curl,CURLOPT_POSTFIELDS,$post_data);
 	$datastr='http://127.0.0.1:'.strval(CQHTTP_PORT)."/".$api.'?';
 	foreach ($get_data as $k=>$d){
 	$datastr=$datastr.rawurlencode($k).'='.rawurlencode($d).'&';
@@ -133,6 +160,10 @@ function send_msg($args,$message){
 	} elseif ($args['message_type']=='guild') {
 		return intval(cqhttp_api("send_guild_channel_msg",array("guild_id"=>$args['guild_id'],"channel_id"=>$args['channel_id'],"message"=>$message))['message_id']);
 	};
+};
+
+// 发送群合并转发消息（API 封装）
+function send_group_forward_msg($group_id,$message){
 };
 
 // 撤回消息（API 封装）

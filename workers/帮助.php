@@ -39,7 +39,7 @@ function msg_handler($args){
         foreach(CMDLIST as $key=>$cmd){
             $help=$help.$key.'：'.$cmd[0].PHP_EOL;
         };
-        $help=$help.'Tips：请不要在群内利用帮助刷屏，尽量使用私信。'.PHP_EOL.'使用 ::help <分类> 查看不同分类的帮助。'.PHP_EOL.'Powered by go-cqhttp，2021-2022 是一刀斩哒';
+        $help=$help.'Tips：请不要在群内利用帮助刷屏，尽量使用私信。'.PHP_EOL.'使用 ::帮助 <分类> 查看不同分类的帮助。'.PHP_EOL.'Powered by go-cqhttp，2021-2022 是一刀斩哒';
     } else {
         if (!is_null(CMDLIST[$args['command']])) {
         $help="帮助（".CMDLIST[$args['command']][0]."）：".PHP_EOL;
