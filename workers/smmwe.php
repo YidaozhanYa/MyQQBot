@@ -13,13 +13,16 @@ function permission()
 
 function msg_handler($args)
 {
-    if ($args['message_type']=='group'){
+    if ($args['message_type'] == 'group') {
+        if (do_cooldown('we', 6000, $args)) {
+            return;
+        };
+    };
     $lvl_id = strtoupper($args['command']);
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
         send_msg($args, "关卡 ID 格式不正确。格式：XXXX-XXXX-XXXX-XXXX");
         return;
     };
-    if (do_cooldown('we',6000,$args)) {return;};
     $message_id = send_msg($args, "正在查询关卡 " . $lvl_id . " ...");
     $auth_code = file_get_contents("data_store/smmwe_auth_code.txt");
     $url = "http://172.93.102.10:25833/stage/" . $lvl_id;
@@ -32,7 +35,7 @@ function msg_handler($args)
         error_log(json_encode($data));
     };
     if (is_null($data['error_type']) == false and $data['error_type'] = '029') {
-        send_msg($args, "关卡 ".$lvl_id." 不存在。");
+        send_msg($args, "关卡 " . $lvl_id . " 不存在。");
         delete_msg($message_id);
         return;
     };
@@ -40,21 +43,22 @@ function msg_handler($args)
     $return = "";
     $return = $return . '关卡：' . $data['name'] . PHP_EOL;
     $return = $return . '作者：' . $data['author'] . PHP_EOL;
-    $return = $return .apariencia[$data['apariencia']] . ' ' . $data['etiquetas'] . PHP_EOL;
-    $return = $return . $data['likes'] . '赞 ' . $data['dislikes'] .'孬' . PHP_EOL;
-    $return = $return . $data['intentos'] . '游玩 ' . $data['victorias'] .'通过 ' . $data['muertes'] .'死亡 ' .number_format(($data['victorias']/$data['intentos']),2)."%".PHP_EOL;
-    $return = $return . '上传日期：' . $data['date'] ;
-    if ($data['record']['record']=="yes"){
-        $return = $return .PHP_EOL. '纪录：' . $data['record']['alias'];
+    $return = $return . apariencia[$data['apariencia']] . ' ' . $data['etiquetas'] . PHP_EOL;
+    $return = $return . $data['likes'] . '赞 ' . $data['dislikes'] . '孬' . PHP_EOL;
+    $return = $return . $data['intentos'] . '游玩 ' . $data['victorias'] . '通过 ' . $data['muertes'] . '死亡 ' . number_format(($data['victorias'] / $data['intentos']), 2) . "%" . PHP_EOL;
+    $return = $return . '上传日期：' . $data['date'];
+    if ($data['record']['record'] == "yes") {
+        $return = $return . PHP_EOL . '纪录：' . $data['record']['alias'];
     };
-    $lvl_file=get_data($data['archivo'],0,0);
-    file_put_contents("data_store/smmwe.swe",$lvl_file);
-    upload_group_file($args["group_id"],"data_store/smmwe.swe",$data['name']." ".$lvl_id.".swe");
     send_msg($args, $return);
-    delete_msg($message_id);
-    return;
+    if ($args['message_type'] == 'group') {
+        $lvl_file = get_data($data['archivo'], 0, 0);
+        file_put_contents("data_store/smmwe.swe", $lvl_file);
+        upload_group_file($args["group_id"], "data_store/smmwe.swe", $data['name'] . " " . $lvl_id . ".swe");
+        delete_msg($message_id);
+        return;
     } else {
-        send_msg($args, "这个命令只能在群里使用，因为机器人没有权限发送私聊文件。");
+        send_msg($args, "注：发送关卡的功能只能在群里使用，因为机器人没有权限发送私聊文件。");
         return;
     };
 };
