@@ -34,7 +34,7 @@ function msg_handler($args){
 	$output=$output.'关卡名：'.$lvl_arr['name'].PHP_EOL;
 	$output=$output.'场景：'.game_style[$lvl_arr['game_style']].' '.theme[$lvl_arr['theme_name']].PHP_EOL;
 	$output=$output."标签：".implode('，',$lvl_arr['tags_name']).PHP_EOL;
-	$output=$output.$lvl_arr['uploader']['name']." 上传于 ".explode(" ",$lvl_arr['uploaded_pretty'])[0].PHP_EOL;
+	$output=$output.$lvl_arr['uploader']['name'].' ('.$lvl_arr['uploader']['code'].") 上传于 ".explode(" ",$lvl_arr['uploaded_pretty'])[0].PHP_EOL;
 	$output=$output."简介：".$lvl_arr['description'].PHP_EOL;
 	$output=$output.$lvl_arr['attempts'].'/'.$lvl_arr['clears'].' ('.$lvl_arr['clear_rate'].' '.difficulty[$lvl_arr['difficulty']].')'.PHP_EOL;
 	$output=$output.$lvl_arr['likes'].'赞，'.$lvl_arr['boos'].'孬';
