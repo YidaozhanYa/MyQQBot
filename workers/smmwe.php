@@ -14,9 +14,9 @@ function permission()
 function msg_handler($args)
 {
     if ($args['message_type'] == 'group') {
-        //if (do_cooldown('we', 6000, $args)) {
-        //    return;
-        //};
+        if (do_cooldown('we', 6000, $args)) {
+            return;
+        };
     };
     $lvl_id = strtoupper($args['command']);
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
