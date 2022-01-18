@@ -203,6 +203,7 @@ function post_data($url, $enable_header, $follow_location, $postfields){
 	curl_setopt($curl,CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($curl,CURLOPT_SSL_VERIFYHOST, false);
 	curl_setopt($curl, CURLOPT_POST,1);
+	curl_setopt($curl,CURLOPT_USERAGENT,"Dalvik/2.1.0 (Linux; U; Android 10; SCM-W09 Build/HUAWEISCM-W09)");
 	//curl_setopt($curl,CURLOPT_CONNECTTIMEOUT,60);
 	//curl_setopt($curl,CURLOPT_TIMEOUT,60);
 	curl_setopt($curl,CURLOPT_URL,$url);

@@ -14,9 +14,9 @@ function permission()
 function msg_handler($args)
 {
     if ($args['message_type'] == 'group') {
-        if (do_cooldown('we', 6000, $args)) {
-            return;
-        };
+        //if (do_cooldown('we', 6000, $args)) {
+        //    return;
+        //};
     };
     $lvl_id = strtoupper($args['command']);
     if (strpos($lvl_id, "-") == false or strlen($lvl_id) !== 19) {
@@ -28,13 +28,21 @@ function msg_handler($args)
     $url = "http://172.93.102.10:25833/stage/" . $lvl_id;
     $data = json_decode(post_data($url, 0, 0, "token=30204864&discord_id=" . SMMWE_DISCORDID . "&auth_code=" . $auth_code), true);
     error_log(json_encode($data));
-    if (is_null($data['error_type']) == false and $data['error_type'] = '013') {
-        $auth_code = json_decode(post_data("http://172.93.102.10:25833/user/login", 0, 0, "token=30204864&alias=" . SMMWE_ACCOUNT . "&password=" . SMMWE_PASSWD), true)['auth_code'];
+    if ($data['error_type'] === '015' or $data['error_type'] === '013') {
+        error_log("relogin");
+        $auth_code=post_data("http://172.93.102.10:25833/user/login", 0, 0, "token=30204864&alias=" . SMMWE_ACCOUNT . "&password=" . SMMWE_PASSWD);
+        error_log($auth_code);
+        if (json_decode($auth_code,true)["error_type"]==="008") {
+            send_msg($args, "发生未知错误。屑弗！");
+            delete_msg($message_id);
+            return;
+        };
+        $auth_code = json_decode($auth_code,true)['auth_code'];
         file_put_contents("data_store/smmwe_auth_code.txt", $auth_code);
         $data = json_decode(post_data($url, 0, 0, "token=30204864&discord_id=" . SMMWE_DISCORDID . "&auth_code=" . $auth_code), true);
         error_log(json_encode($data));
     };
-    if (is_null($data['error_type']) == false and $data['error_type'] = '029') {
+    if ($data['error_type'] === '029') {
         send_msg($args, "关卡 " . $lvl_id . " 不存在。");
         delete_msg($message_id);
         return;
