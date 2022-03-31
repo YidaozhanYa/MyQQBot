@@ -42,7 +42,7 @@ function msg_handler($args){
 	$output=$output.'普通团纪录：'.$mkr_arr['normal_highscore'].PHP_EOL;
 	$output=$output.'困难团纪录：'.$mkr_arr['expert_highscore'].PHP_EOL;
 	$output=$output.'极难团纪录：'.$mkr_arr['super_expert_highscore'];
-	send_msg($args,$output);
+	send_msg_topicture($args,$output,"mm2");
 	
 	$output="";
 	$output=$output.'对战积分：'.$mkr_arr['versus_rating'].' 段位：'.$mkr_arr['versus_rank_name'].PHP_EOL;
@@ -55,7 +55,7 @@ function msg_handler($args){
 	$output=$output.'合作场数：'.$mkr_arr['coop_plays'].PHP_EOL;
 	$output=$output.'合作过关场数：'.$mkr_arr['coop_clears'].PHP_EOL;
 	$output=$output.'网络区服：'.$mkr_arr['region_name'];
-	send_msg($args,$output);
+	send_msg_topicture($args,$output,"mm2");
 	
 	delete_msg($message_id);
 	

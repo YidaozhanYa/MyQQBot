@@ -34,11 +34,12 @@ if ($args['message_type']=='guild') {
 // 封禁
 if(do_ban($args)){return;};
 
-// ？？？？
-if (preg_match('/[涩色]图/',$args['message'])) {
-	send_msg($args,'没有涩图');
-	return;
+//alias相关判定
+
+if(array_key_exists($cmd_name, ALIAS)){
+	$cmd_name=ALIAS[$cmd_name];
 };
+
 $fname=getcwd()."/workers/".$cmd_name.".php";
 if(file_exists($fname)) {
 	$args['command']=str_replace(explode(" ",$args["message"])[0],"",$args["message"]);
@@ -186,8 +187,8 @@ function get_data($url, $enable_header, $follow_location){
 	curl_setopt($curl,CURLOPT_FOLLOWLOCATION,$follow_location);
 	curl_setopt($curl,CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($curl,CURLOPT_SSL_VERIFYHOST, false);
-	//curl_setopt($curl,CURLOPT_CONNECTTIMEOUT,60);
-	//curl_setopt($curl,CURLOPT_TIMEOUT,60);
+	curl_setopt($curl,CURLOPT_CONNECTTIMEOUT,120);
+	curl_setopt($curl,CURLOPT_TIMEOUT,120);
 	curl_setopt($curl,CURLOPT_URL,$url);
 	$return_data=curl_exec($curl);
 	curl_close($curl);
@@ -264,5 +265,36 @@ function do_ban($args){
 	};
 return $return;
 };
+
+//合并发送为图片
+function send_msg_topicture($args,$message,$background){
+	file_put_contents(getcwd()."/temp.txt",$message);
+	$command=getcwd()."/silicon-1 ".getcwd()."/temp.txt -o ".getcwd()."/images/temp.png --no-line-number --background-image ".getcwd()."/images/".$background.".jpg";
+	error_log($command);
+	exec($command);
+	if ($args['message_type']=='group'){
+		return intval(cqhttp_api("send_group_msg",array("group_id"=>intval($args['group_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	} elseif ($args['message_type']=='private') {
+		return intval(cqhttp_api("send_private_msg",array("user_id"=>intval($args['user_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	} elseif ($args['message_type']=='guild') {
+		return intval(cqhttp_api("send_guild_channel_msg",array("guild_id"=>$args['guild_id'],"channel_id"=>$args['channel_id'],"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	};
+};
+
+//合并发送为图片 带高亮 sh
+function send_msg_topicture_sh($args,$message,$background){
+	file_put_contents(getcwd()."/temp.sh",$message);
+	$command=getcwd()."/silicon-1 ".getcwd()."/temp.sh -o ".getcwd()."/images/temp.png --background-image ".getcwd()."/images/".$background.".jpg";
+	error_log($command);
+	exec($command);
+	if ($args['message_type']=='group'){
+		return intval(cqhttp_api("send_group_msg",array("group_id"=>intval($args['group_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	} elseif ($args['message_type']=='private') {
+		return intval(cqhttp_api("send_private_msg",array("user_id"=>intval($args['user_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	} elseif ($args['message_type']=='guild') {
+		return intval(cqhttp_api("send_guild_channel_msg",array("guild_id"=>$args['guild_id'],"channel_id"=>$args['channel_id'],"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	};
+};
+
 
 ?>
