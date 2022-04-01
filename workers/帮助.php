@@ -67,7 +67,7 @@ function msg_handler($args){
         $help=$help.'Powered by go-cqhttp，2022 是一刀斩哒';
     };
     };
-	send_msg($args,$help);
+	send_msg_topicture($args,$help,"kde");
 	return;
 };
 ?>

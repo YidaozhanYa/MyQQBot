@@ -19,14 +19,15 @@ function msg_handler($args){
 	$return=$return."IP：".$ip.":".$_SERVER["SERVER_PORT"].PHP_EOL;
 	$return=$return."go-cqhttp 版本：".$ver.PHP_EOL;
 	$return=$return."本次运行情况如下：".PHP_EOL;
-	$return=$return."收包数：".$stat['PacketReceived'].PHP_EOL;
-	$return=$return."发包数：".$stat['PacketSent'].PHP_EOL;
-	$return=$return."丢包数：".$stat['PacketLost'].PHP_EOL;
-	$return=$return."收消息数：".$stat['MessageReceived'].PHP_EOL;
-	$return=$return."发消息数：".$stat['MessageSent'].PHP_EOL;
-	$return=$return."连接中断数：".$stat['DisconnectTimes'].PHP_EOL;
-	$return=$return."掉线数：".$stat['LostTimes'];
-	send_msg($args,$return);
+	$return=$return."收包数：".$stat['packet_received'].PHP_EOL;
+	$return=$return."发包数：".$stat['packet_sent'].PHP_EOL;
+	$return=$return."丢包数：".$stat['packet_lost'].PHP_EOL;
+	$return=$return."收消息数：".$stat['message_received'].PHP_EOL;
+	$return=$return."发消息数：".$stat['message_sent'].PHP_EOL;
+	$return=$return."连接中断数：".$stat['disconnect_times'].PHP_EOL;
+	$return=$return."掉线数：".$stat['lost_times'];
+	exec("bash nocolor.sh neofetch --off --ascii_bold off --color_blocks off",$return2);
+	send_msg_topicture($args,$return.PHP_EOL.PHP_EOL.implode(PHP_EOL,$return2),"kde");
 	return;
 };
 ?>
