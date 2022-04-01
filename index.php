@@ -268,17 +268,26 @@ return $return;
 
 //合并发送为图片
 function send_msg_topicture($args,$message,$background){
-	file_put_contents(getcwd()."/temp.txt",$message);
-	$command=getcwd()."/silicon-1 ".getcwd()."/temp.txt -o ".getcwd()."/images/temp.png --no-line-number --background-image ".getcwd()."/images/".$background.".jpg";
-	error_log($command);
-	exec($command);
-	if ($args['message_type']=='group'){
-		return intval(cqhttp_api("send_group_msg",array("group_id"=>intval($args['group_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
-	} elseif ($args['message_type']=='private') {
-		return intval(cqhttp_api("send_private_msg",array("user_id"=>intval($args['user_id']),"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
-	} elseif ($args['message_type']=='guild') {
-		return intval(cqhttp_api("send_guild_channel_msg",array("guild_id"=>$args['guild_id'],"channel_id"=>$args['channel_id'],"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
+	if (strlen($message)<2000){
+		unlink(getcwd()."/images/temp.png");
+		file_put_contents(getcwd()."/temp.txt",$message);
+		$command=getcwd()."/silicon-1 ".getcwd()."/temp.txt -o ".getcwd()."/images/temp.png --no-line-number --background-image ".getcwd()."/images/".$background.".jpg";
+		error_log($command);
+		exec($command);
+		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
+	} else {
+		$message2=mb_substr($message,0,2000,"utf-8")." ...".PHP_EOL.PHP_EOL."内容过长，更多请前往如下链接查看。";
+		unlink(getcwd()."/images/temp.png");
+		file_put_contents(getcwd()."/temp.txt",$message2);
+		file_put_contents(getcwd()."/temp2.txt",$message);
+		$command=getcwd()."/silicon-1 ".getcwd()."/temp.txt -o ".getcwd()."/images/temp.png --no-line-number --background-image ".getcwd()."/images/".$background.".jpg";
+		error_log($command);
+		exec($command);
+		exec("curl --upload-file ".getcwd()."/full.txt https://transfer.sh/full.txt -H \" Max-Days: 1 \"",$retval);
+		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
+		send_msg($args,"展开：".str_replace("transfer.sh","transfer.sh/inline",implode("",$retval)));
 	};
+	return;
 };
 
 //合并发送为图片 带高亮 sh
