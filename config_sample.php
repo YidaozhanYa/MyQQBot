@@ -28,8 +28,8 @@ function global_config(){
 	define('CHANNEL_ID','1808858'); // 机器人工作的子频道 ID
 
 	// 帮助命令表
-    define('CMDLIST',array('基本'=>array('基本命令',array('帮助','说','统计')),'游戏'=>array('游戏相关命令',array('马造查图','马造查玩家','原神祈愿')),'其它'=>array('不正经或无法分类的命令',array('涩图')),'工具'=>array('网络及工具相关命令',array('ping','查包','github','base64')),'管理'=>array('管理员/超级管理员命令',array('banuser','sh')))); //帮助内的命令分类
-	define('ALIAS',array('arch'=>"查包","help"=>"帮助","echo"=>"说","stats"=>"统计","wish"=>"原神祈愿","setu"=>"涩图","色图"=>"涩图")); //命令别名
+    define('CMDLIST',array('基本'=>array('基本命令',array('帮助','说','统计')),'游戏'=>array('游戏相关命令',array('马造查图','马造查玩家','原神祈愿')),'其它'=>array('不正经或无法分类的命令',array('涩图','好好说话')),'工具'=>array('网络及工具相关命令',array('ping','查包','pkgfile','pkgbuild','github','base64','翻译')),'管理'=>array('管理员/超级管理员命令',array('banuser','sh')))); //帮助内的命令分类
+	define('ALIAS',array('arch'=>"查包","help"=>"帮助","echo"=>"说","stats"=>"统计","wish"=>"原神祈愿","setu"=>"涩图","色图"=>"涩图","封禁"=>"banuser","说人话"=>"翻译","hhsh"=>"好好说话","cmd"=>"sh","pkg"=>"查包","PKGBUILD"=>"pkgbuild"));
 };
 
 function global_permission(){
