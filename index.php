@@ -276,16 +276,16 @@ function send_msg_topicture($args,$message,$background){
 		exec($command);
 		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
 	} else {
-		$message2=mb_substr($message,0,2000,"utf-8")." ...".PHP_EOL.PHP_EOL."内容过长，更多请前往如下链接查看。";
+		$message2=Cut_string($message,0,2000)." ...".PHP_EOL.PHP_EOL."内容过长，更多请前往如下链接查看。";
 		unlink(getcwd()."/images/temp.png");
 		file_put_contents(getcwd()."/temp.txt",$message2);
-		file_put_contents(getcwd()."/temp2.txt",$message);
+		file_put_contents(getcwd()."/full.txt",$message);
 		$command=getcwd()."/silicon-1 ".getcwd()."/temp.txt -o ".getcwd()."/images/temp.png --no-line-number --background-image ".getcwd()."/images/".$background.".jpg";
 		error_log($command);
 		exec($command);
-		exec("curl --upload-file ".getcwd()."/full.txt https://transfer.sh/full.txt -H \" Max-Days: 1 \"",$retval);
+		exec("curl --upload-file ".getcwd()."/full.txt https://transfer.sh/full.txt",$retval);
 		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
-		send_msg($args,"展开：".str_replace("transfer.sh","transfer.sh/inline",implode("",$retval)));
+		send_msg($args,"展开：".str_replace(implode("",$retval)));
 	};
 	return;
 };
@@ -305,5 +305,38 @@ function send_msg_topicture_sh($args,$message,$background){
 	};
 };
 
+function Cut_string($string, $start ,$sublen, $extstring='...', $code = 'UTF-8') {//Cut_string开始
+	if($code == 'UTF-8')
+	{
+	$pa = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/";
+	preg_match_all($pa, $string, $t_string);
+	if(count($t_string[0]) - $start > $sublen) return join('', array_slice($t_string[0], $start, $sublen)).$extstring;
+	return join('', array_slice($t_string[0], $start, $sublen));
+	}
+	else
+	{
+	$start = $start*2;
+	$sublen = $sublen*2;
+	$strlen = strlen($string);
+	$tmpstr = '';
+	for($i=0; $i<$strlen; $i++)
+	{
+	if($i>=$start && $i<($start+$sublen))
+	{
+	if(ord(substr($string, $i, 1))>129)
+	{
+	$tmpstr.= substr($string, $i, 2);
+	}
+	else
+	{
+	$tmpstr.= substr($string, $i, 1);
+	}
+	}
+	if(ord(substr($string, $i, 1))>129) $i++;
+	}
+	if(strlen($tmpstr)<$strlen ) $tmpstr.= $extstring;
+	return $tmpstr;
+	}
+	} //Cut_string结束
 
 ?>
