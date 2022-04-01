@@ -11,8 +11,8 @@ function permission(){
 
 function msg_handler($args){
 	$pkgfile=json_decode(get_data("http://82.156.27.226:5557/".$args["command"],0,0),true)['data'];
+	$output="文件 ".$args["command"]." 的查询结果：".PHP_EOL;
 	foreach($pkgfile as $file){
-		$output="文件 ".$args["command"]." 的查询结果：".PHP_EOL;
 		$output=$output."- 软件包 ".$file['name']." (v".$file['ver'].", ".$file['repo'].")".PHP_EOL;
 		$output=$output."  ".implode(PHP_EOL."  ",$file['path']).PHP_EOL;
 	};
