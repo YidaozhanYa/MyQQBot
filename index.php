@@ -285,7 +285,7 @@ function send_msg_topicture($args,$message,$background){
 		exec($command);
 		exec("curl --upload-file ".getcwd()."/full.txt https://transfer.sh/full.txt",$retval);
 		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
-		send_msg($args,"展开：".str_replace(implode("",$retval)));
+		send_msg($args,"展开：".implode("",$retval));
 	};
 	return;
 };
