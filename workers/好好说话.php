@@ -11,7 +11,7 @@ function permission(){
 
 function msg_handler($args){
 	$output="";
-	$translate_json=json_decode(post_data("https://lab.magiconch.com/api/nbnhhsh/guess",0,0,"text=\"".$args["command"]."\"",0,0),true);
+	$translate_json=json_decode(post_data("https://lab.magiconch.com/api/nbnhhsh/guess",0,0,"text=\"".$args["command"]."\""),true);
 	foreach($translate_json as $line){
 		$output=$output.$line['name']."：";
 		foreach($line['trans'] as $trans){

@@ -26,7 +26,7 @@ function msg_handler($args){
 	$return=$return."发消息数：".$stat['message_sent'].PHP_EOL;
 	$return=$return."连接中断数：".$stat['disconnect_times'].PHP_EOL;
 	$return=$return."掉线数：".$stat['lost_times'];
-	exec("bash nocolor.sh neofetch --off --ascii_bold off --color_blocks off",$return2);
+	exec("bash nocolor.sh bash ".getcwd()."/neofetch.sh --off --ascii_bold off --color_blocks off",$return2);
 	send_msg_topicture($args,$return.PHP_EOL.PHP_EOL.implode(PHP_EOL,$return2),"kde");
 	return;
 };

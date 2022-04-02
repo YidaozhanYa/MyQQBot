@@ -1,1 +1,26 @@
-{"message":{".regex":"^[:：][:：]"}}
+{
+	".or": [{
+			"message": {
+				".regex": "^[:：][:：]"
+			}
+		},
+		{
+			"message": {
+				".regex": "^https"
+			}
+		},
+		{
+			"message": {
+				".regex": "^BV"
+			}
+		},
+		{
+			"message": {
+				".regex": "^b23"
+			}
+		}
+	],
+	"anonymous": {
+		".eq": null
+	}
+}
