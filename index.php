@@ -104,8 +104,12 @@ if ($args['message_type']=='group' and is_null($deny_group)==false and in_array(
 	};
 	return;
 };
-msg_handler($args);
-return;
+if (filter_hard($args)==false) {
+	return;
+} else {
+	msg_handler($args);
+	return;
+}
 
 // 以下函数可在各个命令内调用
 
