@@ -10,7 +10,7 @@ function permission(){
 
 function msg_handler($args){
 	if (do_cooldown('ping',30,$args)) {return;};
-    exec("ping -c 2 ".$args['command'], $retval);
+    exec("ping -c 2 ".explode(" ",str_replace("$"," ",str_replace("|"," ",str_replace(";"," ",str_replace("&"," ",$args['command'])))))[0], $retval);
 	send_group_msg($args["group_id"],implode(PHP_EOL,$retval));
 };
 ?> 

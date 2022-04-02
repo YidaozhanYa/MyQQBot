@@ -14,7 +14,7 @@ function msg_handler($args){
         if (do_cooldown('help',60,$args)) {return;};
     };
     if ($args['message_type']=='guild') {
-        $help="帮助（频道）：".PHP_EOL;
+        $help="❔ 帮助 (频道): ".PHP_EOL;
         foreach (ENABLE_GUILD_CMDS as $cmd) {
             if (!$cmd=='帮助') {
             $cmd_contents=file(getcwd()."/workers/".$cmd.".php",FILE_SKIP_EMPTY_LINES);
@@ -24,7 +24,7 @@ function msg_handler($args){
                     $cmds[0]=CMD_PREFIX.$cmd."：".str_replace(PHP_EOL,"",str_replace("//desc","",$line));
                 };
                 if (strpos($line,"//usage")!==false) {
-                    $cmds[1]="参数：".str_replace(PHP_EOL,"",str_replace("//usage","",$line));
+                    $cmds[1]="  参数：".str_replace(PHP_EOL,"",str_replace("//usage","",$line));
                     break;
                 };
             };
@@ -35,7 +35,7 @@ function msg_handler($args){
         error_log($help);
     } else {
     if ($args['command']=="") {
-        $help="帮助：".PHP_EOL;
+        $help="❔ 帮助:".PHP_EOL;
         foreach(CMDLIST as $key=>$cmd){
             $help=$help.$key.'：'.$cmd[0].PHP_EOL;
         };
@@ -48,10 +48,10 @@ function msg_handler($args){
             $cmds[2]=false;
             foreach ($cmd_contents as $line){
                 if (strpos($line,"//desc")!==false) {
-                    $cmds[0]=CMD_PREFIX.$cmd."：".str_replace(PHP_EOL,"",str_replace("//desc","",$line));
+                    $cmds[0]="- ".CMD_PREFIX.$cmd."：".str_replace(PHP_EOL,"",str_replace("//desc","",$line));
                 };
                 if (strpos($line,"//usage")!==false) {
-                    $cmds[1]="参数：".str_replace(PHP_EOL,"",str_replace("//usage","",$line));
+                    $cmds[1]="  参数：".str_replace(PHP_EOL,"",str_replace("//usage","",$line));
                     break;
                 };
             };

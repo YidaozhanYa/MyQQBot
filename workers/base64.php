@@ -15,7 +15,7 @@ function msg_handler($args){
 	} elseif (substr($args['command'],0,1)=="d") {
 		send_msg($args,base64_decode(substr($args["command"],2),false));
 	} else {
-		send_msg($args,'命令用法不正确。');
+		send_msg($args,'❌ 命令用法不正确。');
 	};
 };
 ?>

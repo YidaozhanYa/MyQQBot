@@ -10,11 +10,11 @@ function permission(){
 
 function msg_handler($args){
     $pkgname=strtolower($args['command']);
-	$message_id=send_msg($args,"正在查询软件包 ".$pkgname." 的 PKGBUILD ...");
+	$message_id=send_msg($args,"⏰ 正在查询软件包 ".$pkgname." 的 PKGBUILD ...");
     	//AUR
     	$pkgbuild=get_data("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=".$pkgname,0,0);
 		if (strpos($pkgbuild,"<!DOCTYPE html>")!==false){
-			send_msg($args,$pkgname." 软件包不存在，或不在 AUR 中。");
+			send_msg($args,"❌ ".$pkgname." 软件包不存在，或不在 AUR 中。");
 		} else {
 			send_msg_topicture_sh($args,$pkgbuild,"kde");
 		};

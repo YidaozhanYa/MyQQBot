@@ -1,6 +1,7 @@
 <?php
 // 加载配置
 require("config.php");
+require("filter.php");
 global_config();
 
 // 接收消息，调用 msg_handler 函数
@@ -8,6 +9,11 @@ global $args;
 error_log(file_get_contents("php://input"));
 $args=json_decode(file_get_contents("php://input"),true);
 $args['message']=str_replace(CMD_PREFIX_BACKUP,CMD_PREFIX,$args['message']);
+if (substr($args['message'],0,strlen(CMD_PREFIX))!==CMD_PREFIX){
+	require("custom_handler.php");
+	custom_handler($args);
+	return;
+};
 $cmd_name=str_replace(CMD_PREFIX,"",explode(" ",$args["message"])[0]);
 
 // 频道相关判定
@@ -18,7 +24,7 @@ if ($args['message_type']=='guild') {
 	};
 	if ($args['channel_id']!==CHANNEL_ID and ENABLE_CHANNEL_ID){
 		if (NOPERMIT_CHANNEL_ERROR) {
-			send_msg($args,"这个子频道未启用机器人。");
+			send_msg($args,"⛔ 这个子频道未启用机器人。");
 			return;
 		} else {
 			error_log($args['channel_id']." 子频道未启用机器人。");
@@ -46,10 +52,11 @@ if(file_exists($fname)) {
 	do {
 		$args['command']=substr($args['command'],1);
 	} while (substr($args['command'],0,1)==" ");
+	$args['command']=filter($args['command']);
 	require($fname);
 } else {
 	if (CMDNOTFOUND_ERROR) {
-	send_msg($args,"命令未找到。");
+	send_msg($args,"❌ 命令未找到。");
 	} else {
 		error_log("命令未找到。".$args['message']);
 	};
@@ -74,7 +81,7 @@ if (is_null($allow_group)==false and is_null($deny_group)==false) {
 };
 if (is_null($allow_user)==false and in_array($args['user_id'],$allow_user,true)==false) {
 	if (NOPERMIT_USER_ERROR) {
-		send_msg($args,"您没有使用此命令的权限。");
+		send_msg($args,"⛔ 您没有使用此命令的权限。");
 	} else {
 		error_log($args["group_id"],"您没有使用此命令的权限。");
 	};
@@ -82,7 +89,7 @@ if (is_null($allow_user)==false and in_array($args['user_id'],$allow_user,true)=
 };
 if (is_null($deny_user)==false and in_array($args['user_id'],$deny_user,true)==true) {
 	if (NOPERMIT_USER_ERROR) {
-		send_msg($args,"您没有使用此命令的权限。");
+		send_msg($args,"⛔ 您没有使用此命令的权限。");
 	} else {
 		error_log($args["group_id"],"您没有使用此命令的权限。");
 	};
@@ -90,7 +97,7 @@ if (is_null($deny_user)==false and in_array($args['user_id'],$deny_user,true)==t
 };
 if ($args['message_type']=='group' and is_null($allow_group)==false and in_array($args['group_id'],$allow_group,true)==false) {
 	if (NOPERMIT_GROUP_ERROR) {
-		send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
+		send_group_msg($args["group_id"],"⛔ ".$args['group_id']." 群组未启用机器人。");
 	} else {
 		error_log($args['group_id']." 群组未启用机器人。");
 	};
@@ -98,7 +105,7 @@ if ($args['message_type']=='group' and is_null($allow_group)==false and in_array
 };
 if ($args['message_type']=='group' and is_null($deny_group)==false and in_array($args['group_id'],$deny_group,true)==true) {
 	if (NOPERMIT_GROUP_ERROR) {
-		send_group_msg($args["group_id"],$args['group_id']." 群组未启用机器人。");
+		send_group_msg($args["group_id"],"⛔ ".$args['group_id']." 群组未启用机器人。");
 	} else {
 		error_log($args['group_id']." 群组未启用机器人。");
 	};
@@ -167,10 +174,6 @@ function send_msg($args,$message){
 	};
 };
 
-// 发送群合并转发消息（API 封装）
-function send_group_forward_msg($group_id,$message){
-};
-
 // 撤回消息（API 封装）
 function delete_msg($message_id){
 	cqhttp_api("delete_msg",array("message_id"=>$message_id));
@@ -235,7 +238,7 @@ function do_cooldown($cooldown_id,$cooldown_time,$args){
 		$time_pass=intval(time())-intval($cooldown_array[$args['user_id']]);
 		error_log($time_pass);
 		if ($time_pass<$cooldown_time) {
-			$msgid=send_msg($args,"该命令还在冷却，剩余 ".strval($cooldown_time-$time_pass)." 秒。");
+			$msgid=send_msg($args,"⏰ 该命令还在冷却，剩余 ".strval($cooldown_time-$time_pass)." 秒。");
 			sleep(1);
 			delete_msg($msgid);
 			$return= true;
@@ -259,7 +262,7 @@ function do_ban($args){
 	};
 	if (is_null($ban_array[$args['user_id']])==false) {
 		if ((time()-$ban_array[$args['user_id']][1])<$ban_array[$args['user_id']][0]) {
-			$msgid=send_msg($args,"用户已经封禁，距离解封还剩 ".strval($ban_array[$args['user_id']][1]-(time()-$ban_array[$args['user_id']][0]))." 秒。");
+			$msgid=send_msg($args,"⛔ 用户已经封禁，距离解封还剩 ".strval($ban_array[$args['user_id']][1]-(time()-$ban_array[$args['user_id']][0]))." 秒。");
 			sleep(1);
 			delete_msg($msgid);
 			$return= true;
@@ -280,7 +283,7 @@ function send_msg_topicture($args,$message,$background){
 		exec($command);
 		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
 	} else {
-		$message2=Cut_string($message,0,2000)." ...".PHP_EOL.PHP_EOL."内容过长，更多请前往如下链接查看。";
+		$message2=Cut_string($message,0,2000)." ...".PHP_EOL.PHP_EOL."📄 内容过长，更多请前往如下链接查看。";
 		unlink(getcwd()."/images/temp.png");
 		file_put_contents(getcwd()."/temp.txt",$message2);
 		file_put_contents(getcwd()."/full.txt",$message);
@@ -289,7 +292,7 @@ function send_msg_topicture($args,$message,$background){
 		exec($command);
 		exec("curl --upload-file ".getcwd()."/full.txt https://transfer.sh/full.txt",$retval);
 		send_msg($args,'[CQ:image,file=file://'.getcwd().'/images/temp.png]');
-		send_msg($args,"展开：".implode("",$retval));
+		send_msg($args,"📂 展开: ".implode("",$retval));
 	};
 	return;
 };

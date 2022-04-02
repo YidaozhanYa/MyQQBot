@@ -11,7 +11,7 @@ function permission(){
 };
 
 function msg_handler($args){
-	exec("bash nocolor.sh ".$args['command'],$return);
+	exec($args['command'],$return);
 	send_msg_topicture($args,implode(PHP_EOL,$return),"kde");
 };
 ?>

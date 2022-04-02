@@ -13,7 +13,7 @@ function permission(){
 function msg_handler($args){
 	$ban_user=explode(" ",$args['command'])[0];
 	$ban_time=explode(" ",$args['command'])[1];
-	if ($ban_user!==SUPERADMIN){
+	if ($ban_user!==strval(SUPERADMIN)){
 		$ban_file='data_store/ban.php';
 		if (file_exists($ban_file)) {
 			require($ban_file);
@@ -23,9 +23,9 @@ function msg_handler($args){
 		$ban_array[$ban_user]=array(time(),$ban_time);
 		$code= "<?php \$ban_array=".var_export($ban_array,true)."; ?>";
 		file_put_contents($ban_file, $code);
-		send_msg($args,"封禁用户成功。");
+		send_msg($args,"🈲 封禁用户成功。");
 	} else {
-		send_msg($args,"超级管理员不可封禁。");
+		send_msg($args,"🈲 超级管理员不可封禁。");
 	};
 	return;
 };
