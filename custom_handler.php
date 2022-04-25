@@ -30,7 +30,7 @@ function bv_return_meta($bvid,$args,$nourl){
     if ($bvdata['stat']['argue_msg']!==""){$output=$output.$bvdata['stat']['argue_msg'].PHP_EOL;};
     $output=$output."简介: ".$bvdata['desc'].PHP_EOL;
     send_msg($args,"[CQ:image,file=".$bvdata["pic"]."]");
-    send_msg_topicture($args,$output,"kde");
+    send_msg($args,$output);
     if ($nourl==false){
     send_msg($args,"https://www.bilibili.com/video/".$bvdata['bvid']);}
 };
