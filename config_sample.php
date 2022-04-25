@@ -19,6 +19,8 @@ function global_config(){
 	define('SMMWE_PASSWD',"10001"); // SMMWE 密码
 	define('SMMWE_DISCORDID',"10001"); // SMMWE DiscordID
 	define('GITHUB_TOKEN','ghp_10001'); // 机器人工作的子频道 ID
+	define("GI_API", "https://www.theresa3rd.cn:8080/api"); // 原神德丽莎抽卡模拟 API
+	define("GI_AUTH", "KEY");// 原神德丽莎抽卡模拟 Key
 
 	// 频道相关
 	define('NOPERMIT_CHANNEL_ERROR',false); // 当某子频道没权限执行命令时是否发送错误消息

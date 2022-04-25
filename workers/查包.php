@@ -86,12 +86,16 @@ function msg_handler($args){
 		} else {
 			$output=$output."📤 上游: ".$pkgarr['URL'].PHP_EOL;
 		};
-		$output=$output."👤 维护者: ".$pkgarr['Maintainer'].PHP_EOL;
+		if (is_null($pkgarr['Maintainer'])){$output=$output."👤 无人维护".PHP_EOL;}
+		 else {$output=$output."👤 维护者: ".$pkgarr['Maintainer'].PHP_EOL;};
 		$output=$output.get_value($pkgarr,"Depends","🎒 依赖","，");
 		$output=$output.get_value($pkgarr,"MakeDepends","🖥️ 编译依赖","，");
 		$output=$output.get_value($pkgarr,"OptDepends","🛍 可选依赖",PHP_EOL);
 		$output=$output.get_value($pkgarr,"Conflicts","🔀 冲突","，");
 		$output=$output.get_value($pkgarr,"Provides","🔁 提供","，");
+		$output=$output."🗳 得票数: ".$pkgarr["NumVotes"].PHP_EOL;
+		$output=$output."⏰ 上次修改: ".date('Y-m-d H:i:s', $pkgarr["LastModified"]).PHP_EOL;
+		if (is_null($pkgarr['OutOfDate'])==false){$output=$output."💢 于 ".date('Y-m-d H:i:s', $pkgarr["OutOfDate"])." 过时".PHP_EOL;};
 		send_msg($args,trim($output));
 		delete_msg($message_id);
 		return;
