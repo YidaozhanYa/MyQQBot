@@ -15,6 +15,12 @@ if (substr($args['message'],0,14)=="https://b23.tv"){
 if (substr($args['message'],0,24)=="https://www.bilibili.com"){
     bv_return_meta(str_replace("https://www.bilibili.com/video/","",explode("?",$args['message'])[0]),$args,true);
 };
+if (strpos($args['message'],"QQ小程序&#93;哔哩哔哩")){
+    $strjson=substr(substr($args['message'],strpos($args["message"],"CQ:json,data=")),13);
+    $strjson=str_replace(";",",",str_replace("&#44","",substr($strjson,0,strlen($strjson)-1)));
+    $output=explode("?",json_decode($strjson,true)['meta']['detail_1']['qqdocurl'])[0];
+    send_msg($args,"链接: ".$output);
+};
 return;
 };
 
