@@ -80,7 +80,13 @@ function msg_handler($args){
 			$output="📦 第三方仓库软件包: ".$pkgname." (v".$pkgarr['Version'].")".PHP_EOL;
 			$output=$output."🗃 仓库: ".$third_repo.PHP_EOL;
 		};
-		$output=$output."📄 简介: ".$pkgarr['Description'].PHP_EOL;
+		$translated=translate($pkgarr["Description"]);
+		if ($translated == $pkgarr['Description']){
+			$output=$output."📄 简介: ".$pkgarr['Description'].PHP_EOL;
+		} else {
+			$output=$output."📄 简介: ".$pkgarr['Description']." (".$translated.")".PHP_EOL;
+			}
+
 		if (is_null($pkgarr['URL'])){
 			$output=$output."📤 上游: 🈚".PHP_EOL;
 		} else {
@@ -95,7 +101,7 @@ function msg_handler($args){
 		$output=$output.get_value($pkgarr,"Provides","🔁 提供","，");
 		$output=$output."🗳 得票数: ".$pkgarr["NumVotes"].PHP_EOL;
 		$output=$output."⏰ 上次修改: ".date('Y-m-d H:i:s', $pkgarr["LastModified"]).PHP_EOL;
-		if (is_null($pkgarr['OutOfDate'])==false){$output=$output."💢 于 ".date('Y-m-d H:i:s', $pkgarr["OutOfDate"])." 过时".PHP_EOL;};
+		if (!is_null($pkgarr['OutOfDate'])){$output=$output."💢 于 ".date('Y-m-d H:i:s', $pkgarr["OutOfDate"])." 过时".PHP_EOL;};
 		send_msg($args,trim($output));
 		delete_msg($message_id);
 		return;
@@ -103,8 +109,13 @@ function msg_handler($args){
     error_log(json_encode($pkgarr));
     $pkgarr=$pkgarr['results'][0];
 	$output="📦 官方仓库软件包: ".$pkgname." (v".$pkgarr['pkgver']."-".$pkgarr['pkgrel'].")".PHP_EOL;
-	$output=$output."🗃 仓库: ".$pkgarr['repo'].PHP_EOL;
+    $output=$output."🗃 仓库: ".$pkgarr['repo'].PHP_EOL;
+    $translated=translate($pkgarr["pkgdesc"]);
+    if ($translated == $pkgarr["pkgdesc"]) {
 	$output=$output."📄 简介: ".$pkgarr['pkgdesc'].PHP_EOL;
+    } else {
+	    $output=$output."📄 简介: ".$pkgarr['pkgdesc']." (".$translated.")".PHP_EOL;
+	}
 	$output=$output."📤上游: ".$pkgarr['url'].PHP_EOL;
 	$output=$output."👤 维护者: ".$pkgarr['packager'].PHP_EOL;
 	$output=$output.get_value($pkgarr,"depends","🎒 依赖","，");
@@ -133,5 +144,9 @@ function get_value($pkgarr,$type,$type_txt,$splitstr){
 	};
 	return $tmp;
 };
+
+function translate($input){
+	return json_decode(post_data("http://127.0.0.1:8000/translate",0,0,json_encode(array("text"=>$input,"source_lang"=>"auto","target_lang"=>"ZH"))),true)["data"];
+}
 
 ?> 
