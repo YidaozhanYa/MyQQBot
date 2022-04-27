@@ -23,6 +23,11 @@
 			"message": {
 				".regex": "&#91;&#91;QQ小程序"
 			}
+		},
+		{
+			"message": {
+				".regex": "设精$"
+			}
 		}
 	],
 	"anonymous": {

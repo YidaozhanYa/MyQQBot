@@ -19,12 +19,12 @@ function msg_handler($args){
 	$return=$return."🌐 IP：".$ip.":".$_SERVER["SERVER_PORT"].PHP_EOL;
 	$return=$return."💾 go-cqhttp 版本：".$ver.PHP_EOL;
 	$return=$return."本次运行情况如下：".PHP_EOL;
-	$return=$return."📥 收包数：".$stat['packet_received'].PHP_EOL;
-	$return=$return."📤 发包数：".$stat['packet_sent'].PHP_EOL;
+	$return=$return."📥 收包数：".$stat['packet_received']."	";
+	$return=$return."📤 发包数：".$stat['packet_sent']."	";
 	$return=$return."❎ 丢包数：".$stat['packet_lost'].PHP_EOL;
-	$return=$return."📩 收消息数：".$stat['message_received'].PHP_EOL;
+	$return=$return."📩 收消息数：".$stat['message_received']."	";
 	$return=$return."📨 发消息数：".$stat['message_sent'].PHP_EOL;
-	$return=$return."📳 连接中断数：".$stat['disconnect_times'].PHP_EOL;
+	$return=$return."📳 连接中断数：".$stat['disconnect_times']."	";
 	$return=$return."⛔ 掉线数：".$stat['lost_times'];
 	send_msg_topicture($args,$return,"kde");
 	return;

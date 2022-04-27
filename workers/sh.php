@@ -11,7 +11,7 @@ function permission(){
 };
 
 function msg_handler($args){
-	exec($args['command'],$return);
-	send_msg($args,implode(PHP_EOL,$return));
+	exec($args['command'],$return,$retcode);
+	send_msg($args,"🖥 命令执行结果：".$retcode.PHP_EOL.implode(PHP_EOL,$return));
 };
 ?>

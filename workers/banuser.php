@@ -23,7 +23,7 @@ function msg_handler($args){
 		$ban_array[$ban_user]=array(time(),$ban_time);
 		$code= "<?php \$ban_array=".var_export($ban_array,true)."; ?>";
 		file_put_contents($ban_file, $code);
-		send_msg($args,"🈲 封禁用户成功。");
+		send_msg($args,"🈲 把 ".$ban_user." 封禁了 ".$ban_time." 秒。");
 	} else {
 		send_msg($args,"🈲 超级管理员不可封禁。");
 	};
