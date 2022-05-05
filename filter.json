@@ -28,7 +28,10 @@
 			"message": {
 				".regex": "设精$"
 			}
-		}
+		},
+        {
+            "user_id": 3221692540
+        }
 	],
 	"anonymous": {
 		".eq": null

@@ -11,3 +11,5 @@
 - PHP 环境
 
 并且填写 `config.yml` 和 `config.php`。
+
+不提供部署教程。

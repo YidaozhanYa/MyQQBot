@@ -59,7 +59,7 @@ function msg_handler($args){
         };
         } else {
             if ($args['command']=="别名"){
-                $help="别名列表：".trim(json_encode(ALIAS,JSON_PRETTY_PRINT+JSON_UNESCAPED_UNICODE),"{}").PHP_EOL;
+                $help="别名列表：".trim(json_encode(ALIAS,JSON_UNESCAPED_UNICODE),"{}").PHP_EOL;
             } else {
                 $help='没有这个分类。'.PHP_EOL;
             };

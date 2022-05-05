@@ -8,6 +8,14 @@ global_config();
 global $args;
 error_log(file_get_contents("php://input"));
 $args=json_decode(file_get_contents("php://input"),true);
+
+if ($args['post_type']=='metadata'){return;}
+
+if ($args['user_id']==Q2TG_UIN){
+	error_log("Q2TG message");
+	$args['message']=substr($args['message'], strpos($args['message'],PHP_EOL) + 1);
+};
+
 $args['message']=str_replace(CMD_PREFIX_BACKUP,CMD_PREFIX,$args['message']);
 if (substr($args['message'],0,strlen(CMD_PREFIX))!==CMD_PREFIX){
 	require("custom_handler.php");
@@ -311,6 +319,7 @@ function send_msg_topicture_sh($args,$message,$background){
 		return intval(cqhttp_api("send_guild_channel_msg",array("guild_id"=>$args['guild_id'],"channel_id"=>$args['channel_id'],"message"=>'[CQ:image,file=file://'.getcwd().'/images/temp.png]'))['message_id']);
 	};
 };
+
 
 function Cut_string($string, $start ,$sublen, $extstring='...', $code = 'UTF-8') {//Cut_string开始
 	if($code == 'UTF-8')

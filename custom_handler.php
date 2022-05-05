@@ -38,7 +38,7 @@ function custom_handler($args)
             error_log($cmd);
             exec($cmd);
             sleep(1);
-            $cmd = "curl \"" . ONEMANAGER_ROOT . date("Y/m", time()) . "/?action=upsmallfile" . "\" -F \"file1=@" . $fname . "\" -H \"Cookie: admin=" . ONEMANAGER_ADMIN . "\"";
+            $cmd = "curl \"" . ONEMANAGER_ROOT . date("Y/m", time()) . "/?action=upsmallfile" . "\" -F \"file1=@" . $fname . "\" -H \"Cookie: admin=" . adminpass2cookie(ONEMANAGER_ADMIN) . "\"";
             error_log($cmd);
             exec($cmd, $retval);
             $fileurl = json_decode($retval[0], true)['url'];
@@ -50,7 +50,7 @@ function custom_handler($args)
             $ext = "txt";
             $fname = getcwd() . "/temp/" . $origargs['sender']['user_id'] . "-" . date("d_His", time()) . "." . $ext;
             file_put_contents($fname, $origargs['sender']['nickname']." (".$origargs['sender']['user_id']."): ".$message);
-            $cmd = "curl \"" . ONEMANAGER_ROOT . date("Y/m", time()) . "/?action=upsmallfile" . "\" -F \"file1=@" . $fname . "\" -H \"Cookie: admin=" . ONEMANAGER_ADMIN . "\"";
+            $cmd = "curl \"" . ONEMANAGER_ROOT . date("Y/m", time()) . "/?action=upsmallfile" . "\" -F \"file1=@" . $fname . "\" -H \"Cookie: admin=" . adminpass2cookie(ONEMANAGER_ADMIN) . "\"";
             error_log($cmd); 
             exec($cmd, $retval);
             $fileurl = json_decode($retval[0], true)['url'];
@@ -90,3 +90,9 @@ function b23_to_bvid($url)
 {
     return explode("?", explode("bilibili.com/video/", get_data($url, 0, 0))[1])[0];
 }
+
+function adminpass2cookie($pass)
+{
+    return md5('admin:' . md5($pass) . '@' . (time()+604800)) . "(" . time()+604800 . ")";
+}
+?>
